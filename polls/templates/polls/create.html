@@ -3,29 +3,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My poll app</title>
+    <title>Create Poll</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <style>
+        .errorlist {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1>{{ page_title }}</h1>
+            <h1>Create Form</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <h2>Popular poll</h2>
-            <ul>
-                {% for poll in poll_list %}
-                    <li>{{ poll.id }} {{ poll.title }} ({{ poll.question_count }} คำถาม) - <a
-                            href="{% url 'poll_detail' poll_id=poll.id %}">Detail</a></li>
-                {% endfor %}
-            </ul>
+    <form method="post" action="{% url 'create_poll' %}">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col">
+                {{ form.as_p }}
+            </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col">
+                <input type="submit" value="Create">
+            </div>
+        </div>
+    </form>
 
 </div>
 
