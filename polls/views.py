@@ -1,6 +1,8 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Count
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from polls.forms import PollForm
 from polls.models import Poll, Question, Answer
@@ -27,6 +29,9 @@ def index(request):
     return render(request, template_name='polls/index.html', context=context)
 
 
+# Poll Detail
+@login_required
+@permission_required('polls.view_poll')
 def detail(request, poll_id):
     """
 
@@ -59,6 +64,8 @@ def detail(request, poll_id):
     return render(request, template_name='polls/detail.html', context=context)
 
 
+@login_required
+@permission_required('polls.add_poll')
 def create(request):
     if request.method == 'POST':
         form = PollForm(request.POST)
@@ -85,3 +92,41 @@ def create(request):
     }
 
     return render(request, 'polls/create.html', context=context)
+
+
+# Login
+def my_login(request):
+    context = {}
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        # Login success null if failed
+        if user:
+            login(request, user)
+
+            next_url = request.POST.get('next_url')
+
+            if next_url:
+                return redirect(next_url)
+
+            return redirect('index')
+
+        else:
+            context['username'] = username
+            context['error'] = 'Wrong username or password'
+
+    next_url = request.GET.get('next')
+    if next_url:
+        context['next_url'] = next_url
+
+    return render(request, 'polls/login.html', context=context)
+
+
+# Logout
+def my_logout(request):
+    logout(request)
+    return redirect('login')
