@@ -4,8 +4,8 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from polls.forms import PollForm
-from polls.models import Poll, Question, Answer
+from polls.forms import PollForm, CommentForm
+from polls.models import Poll, Question, Answer, Comment
 
 
 # Create your views here.
@@ -92,6 +92,33 @@ def create(request):
     }
 
     return render(request, 'polls/create.html', context=context)
+
+
+@login_required
+def create_comment(request, poll_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            print(form.cleaned_data)
+            print(form.cleaned_data)
+            comment = Comment.objects.create(
+                title=form.cleaned_data.get('title'),
+                body=form.cleaned_data.get('body'),
+                tel=form.cleaned_data.get('tel'),
+                email=form.cleaned_data.get('email')
+            )
+
+
+    else:
+        form = CommentForm()
+
+    context = {
+        'form': form,
+        'poll_id': poll_id
+    }
+
+    return render(request, 'polls/create-comment.html', context=context)
 
 
 # Login

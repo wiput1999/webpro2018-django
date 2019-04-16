@@ -34,3 +34,30 @@ class PollForm(forms.Form):
 
         if not start and end:
             raise forms.ValidationError('โปรดเลือกวันที่เริ่มต้น')
+
+
+class CommentForm(forms.Form):
+    title = forms.CharField(max_length=100)
+    body = forms.CharField(max_length=500)
+    email = forms.EmailField()
+    tel = forms.CharField(max_length=10)
+
+    def clean_tel(self):
+        tel = self.cleaned_data.get('tel')
+
+        if len(tel) != 10:
+            raise forms.ValidationError("เบอร์มือถือต้องมี 10 หลักเท่านั้น")
+
+        if not tel.isdigit():
+            raise forms.ValidationError("เบอร์มือถือต้องเป็นตัวเลขเท่านั้น")
+
+        return tel
+
+    def clean(self):
+        clean_data = super().clean()
+
+        email = clean_data.get('email')
+        tel = clean_data.get('tel')
+
+        if not (email or tel):
+            raise forms.ValidationError('คุณต้องกรอก Email หรือ Mobile Number')

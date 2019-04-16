@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Comment</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .errorlist {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>New Comment</h1>
+        </div>
+    </div>
+    <form method="post" action="{% url 'create_comment' poll_id=poll_id %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }} <br/>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <p class="errorlist">{{ form.title.errors }}</p>
+                    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                    <input type="text" class="form-control" name="{{ form.title.name }}"
+                           id="{{ form.title.id_for_label }}" value="{{ form.data.title }}">
+                </div>
+
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <p class="errorlist">{{ form.tel.errors }}</p>
+                    <label for="{{ form.tel.id_for_label }}">{{ form.tel.label }}</label>
+                    <input type="text" class="form-control" name="{{ form.tel.name }}"
+                           id="{{ form.tel.id_for_label }}" value="{{ form.data.tel }}">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <p class="errorlist">{{ form.email.errors }}</p>
+                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    <input type="email" class="form-control" name="{{ form.email.name }}"
+                           id="{{ form.email.id_for_label }}" value="{{ form.data.email }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <p class="errorlist">{{ form.body.errors }}</p>
+                    <label for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+                    <textarea type="text" class="form-control" name="{{ form.body.name }}"
+                              id="{{ form.body.id_for_label }}">{{ form.data.body }}</textarea>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="submit" value="Create">
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -37,3 +37,10 @@ class Choice(models.Model):
 class Answer(models.Model):
     choice = models.OneToOneField(Choice, on_delete=models.PROTECT)
     question = models.ForeignKey(Question, on_delete=models.PROTECT)
+
+
+class Comment(models.Model):
+    title = models.CharField(max_length=100)
+    body = models.TextField()
+    email = models.EmailField()
+    tel = models.CharField(max_length=10)
