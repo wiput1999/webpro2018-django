@@ -1,7 +1,26 @@
 from django.db import models
 
 
-# Create your models here.
+class Profile(models.Model):
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+
+    line_id = models.CharField(max_length=100)
+    facebook = models.CharField(max_length=100)
+
+    MALE = 'M'
+    FEMALE = 'F'
+    OTHER = 'X'
+    GENDERS = (
+        (MALE, 'ชาย'),
+        (FEMALE, 'หญิง'),
+        (OTHER, 'อื่นๆ')
+    )
+    gender = models.CharField(max_length=1, choices=GENDERS)
+
+    birth_date = models.DateField()
+
+
+# Poll
 class Poll(models.Model):
     title = models.CharField(max_length=100)
     start_date = models.DateField(null=True, blank=True)
@@ -12,6 +31,7 @@ class Poll(models.Model):
         return self.title
 
 
+# Question
 class Question(models.Model):
     text = models.TextField()
 
@@ -25,6 +45,7 @@ class Question(models.Model):
         return '(%s) %s' % (self.poll.title, self.text)
 
 
+# Choice
 class Choice(models.Model):
     text = models.CharField(max_length=100)
     value = models.IntegerField(default=0)
@@ -34,13 +55,19 @@ class Choice(models.Model):
         return '(%s) %s' % (self.question.text, self.text)
 
 
+# Answer
 class Answer(models.Model):
     choice = models.OneToOneField(Choice, on_delete=models.PROTECT)
     question = models.ForeignKey(Question, on_delete=models.PROTECT)
 
 
+# Comment
 class Comment(models.Model):
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=100)
     body = models.TextField()
-    email = models.EmailField()
-    tel = models.CharField(max_length=10)
+    email = models.EmailField(blank=True)
+    tel = models.CharField(max_length=10, blank=True)
+
+    def __str__(self):
+        return self.title
