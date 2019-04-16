@@ -1,6 +1,7 @@
 from django.db import models
 
 
+# Profile
 class Profile(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
 

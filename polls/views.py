@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from polls.forms import PollForm, CommentForm
+from polls.forms import PollForm, CommentForm, ChangePasswordForm, RegisterForm
 from polls.models import Poll, Question, Answer, Comment
 
 
@@ -100,8 +101,6 @@ def create_comment(request, poll_id):
         form = CommentForm(request.POST)
 
         if form.is_valid():
-            print(form.cleaned_data)
-            print(form.cleaned_data)
             comment = Comment.objects.create(
                 title=form.cleaned_data.get('title'),
                 body=form.cleaned_data.get('body'),
@@ -157,3 +156,41 @@ def my_login(request):
 def my_logout(request):
     logout(request)
     return redirect('login')
+
+
+# Change Password
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+
+        if form.is_valid():
+            user = User.objects.get(username=request.user.username)
+            user.set_password(form.cleaned_data.get('new_password'))
+            user.save()
+
+    else:
+        form = ChangePasswordForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'polls/change-password.html', context=context)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            pass
+
+    else:
+        form = RegisterForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'polls/register.html', context=context)
