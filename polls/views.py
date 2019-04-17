@@ -162,7 +162,7 @@ def my_logout(request):
 @login_required
 def change_password(request):
     if request.method == 'POST':
-        form = ChangePasswordForm(request.POST)
+        form = ChangePasswordForm(request, request.POST)
 
         if form.is_valid():
             user = User.objects.get(username=request.user.username)
@@ -170,7 +170,7 @@ def change_password(request):
             user.save()
 
     else:
-        form = ChangePasswordForm()
+        form = ChangePasswordForm(request)
 
     context = {
         'form': form

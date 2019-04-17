@@ -12,8 +12,7 @@
     <div class="row">
         <div class="col"><h2>Poll : {{ poll.title }} ({{ poll.question_set.all|length }} คำถาม)</h2></div>
     </div>
-    <form method="POST" action="{% url 'poll_detail' poll.id %}">
-        {% csrf_token %}
+    <form method="GET" action="{% url 'poll_detail' poll.id %}">
         {% for question in poll.question_set.all %}
             <div class="row">
                 {{ question.text }}

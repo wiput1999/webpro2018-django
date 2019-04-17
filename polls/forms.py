@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core import validators
 from django.core.exceptions import ValidationError
 
@@ -71,8 +73,17 @@ class ChangePasswordForm(forms.Form):
     new_password = forms.CharField(max_length=50, widget=forms.PasswordInput())
     new_password_confirm = forms.CharField(max_length=50, widget=forms.PasswordInput())
 
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(ChangePasswordForm, self).__init__(*args, **kwargs)
+
     def clean(self):
         clean_data = super().clean()
+
+        user = authenticate(self.request, username=self.request.user.username, password=clean_data.get('old_password'))
+
+        if not user:
+            raise forms.ValidationError('รหัสผ่านเก่าไม่ถูกต้อง')
 
         new_password = clean_data.get('new_password')
         new_password_confirm = clean_data.get('new_password_confirm')
