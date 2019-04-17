@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from polls.forms import PollForm, CommentForm, ChangePasswordForm, RegisterForm
-from polls.models import Poll, Question, Answer, Comment
+from polls.models import Poll, Question, Answer, Comment, Profile
 
 
 # Create your views here.
@@ -184,7 +184,22 @@ def register(request):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-            pass
+            user = User.objects.create(
+                username=form.cleaned_data.get('username'),
+                email=form.cleaned_data.get('email'),
+            )
+
+            user.set_password(form.cleaned_data.get('password'))
+
+            user.save()
+
+            profile = Profile.objects.create(
+                user=user,
+                line_id=form.cleaned_data.get('line_id'),
+                gender=form.cleaned_data.get('gender'),
+                facebook=form.cleaned_data.get('facebook'),
+                birth_date=form.cleaned_data.get('birth_date'),
+            )
 
     else:
         form = RegisterForm()

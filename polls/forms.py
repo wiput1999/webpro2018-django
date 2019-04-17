@@ -87,6 +87,7 @@ class ChangePasswordForm(forms.Form):
 # Register Form
 class RegisterForm(forms.Form):
     email = forms.EmailField()
+    username = forms.CharField(max_length=25)
     password = forms.CharField(max_length=50, widget=forms.PasswordInput(), required=True)
     confirm_password = forms.CharField(max_length=50, widget=forms.PasswordInput(), required=True)
     line_id = forms.CharField(max_length=100, required=False)
