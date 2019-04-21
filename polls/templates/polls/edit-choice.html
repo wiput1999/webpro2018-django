@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Edit Choices</title>
+    <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous"
+    />
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css"/>
+</head>
+<body data="{{ choices }}">
+<div id="app">
+    <div class="title text-center">
+        <h1>Edit Choices</h1>
+        <h3 class="text-muted">{{ question.text }}</h3>
+    </div>
+
+    <div v-if="errorMessage != ''" class="alert alert-danger text-center container">
+        [[ errorMessage ]]
+    </div>
+
+    <div v-if="success" class="alert alert-success text-center container">
+        Saved successful
+    </div>
+
+    <table class="container table">
+        <tr>
+            <td align="center">Choice Text</td>
+            <td align="center">Choice Value</td>
+            <td></td>
+        </tr>
+        <tr v-for="choice in choices">
+            <td><input class="form-control" type="text" v-model="choice.text"></td>
+            <td><input class="form-control" type="number" v-model="choice.value"></td>
+            <td align="right">
+                <input class="btn btn-danger" type="button" @click="deleteChoice(choice)" value="Delete">
+            </td>
+        </tr>
+    </table>
+
+    <div class="text-center">
+        <input class="btn btn-secondary" type="button" @click="addChoice()" value="Add Choice">
+        <input class="btn btn-success" type="button" @click="submit()" value="Save">
+        <a href="{% url 'update_poll' poll_id=poll.id %}">
+            <input class="btn btn-danger" type="button" value="Back">
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+<script type="text/javascript">
+    var csrftoken = Cookies.get('csrftoken');
+    var app = new Vue({
+        el: '#app',
+        delimiters: ['[[', ']]'],
+        data: {
+            success: false,
+            errorMessage: '',
+            choices: JSON.parse(document.getElementsByTagName('body')[0].getAttribute('data'))
+        },
+        methods: {
+            addChoice() {
+                this.choices.push({
+                    text: '',
+                    value: 0
+                });
+            },
+            deleteChoice(choice) {
+                if (confirm('Delete this choice?')) {
+                    this.choices.splice(this.choices.indexOf(choice), 1);
+                }
+            },
+            submit() {
+                axios.post('http://localhost:8000/polls/detail/' + {{ question.id }} +'/choice/api/',
+                    this.choices, {headers: {'X-CSRFTOKEN': csrftoken}}
+                ).then(response => {
+                    this.success = true;
+                    this.errorMessage = '';
+                }).catch(error => {
+                    this.success = false;
+                    this.errorMessage = error.response.data.message
+                })
+            }
+        }
+    });
+</script>
+</body>
+</html>

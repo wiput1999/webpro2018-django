@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core import validators
 from django.core.exceptions import ValidationError
 
-from polls.models import Poll
+from polls.models import Poll, Question, Choice
 
 
 def validate_even(value):
@@ -15,8 +15,6 @@ def validate_even(value):
 # New Poll Form
 class PollForm(forms.Form):
     title = forms.CharField(label='ชื่อโพล', max_length=100, required=True)
-    email = forms.CharField(validators=[validators.validate_email])
-    no_questions = forms.IntegerField(label='จำนวนคำถาม', min_value=0, max_value=10, required=True)
     start_date = forms.DateField(required=False)
     end_date = forms.DateField(required=False)
 
@@ -41,10 +39,26 @@ class PollForm(forms.Form):
             raise forms.ValidationError('โปรดเลือกวันที่เริ่มต้น')
 
 
-class PollModelForm(forms.ModelForm):
-    email = forms.CharField(validators=[validators.validate_email])
-    no_questions = forms.IntegerField(label='จำนวนคำถาม', min_value=0, max_value=10, required=True)
+class QuestionForm(forms.ModelForm):
+    question_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
 
+    class Meta:
+        model = Question
+        exclude = ['poll']
+
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        exclude = []
+
+
+class PollModelForm(forms.ModelForm):
     class Meta:
         model = Poll
         exclude = ['del_flag']
