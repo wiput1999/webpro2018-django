@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from polls.forms import PollForm, CommentForm, ChangePasswordForm, RegisterForm
+from polls.forms import PollForm, CommentForm, ChangePasswordForm, RegisterForm, PollModelForm
 from polls.models import Poll, Question, Answer, Comment, Profile
 
 
@@ -69,30 +69,40 @@ def detail(request, poll_id):
 @permission_required('polls.add_poll')
 def create(request):
     if request.method == 'POST':
-        form = PollForm(request.POST)
+        form = PollModelForm(request.POST)
 
         if form.is_valid():
-            poll = Poll.objects.create(
-                title=form.cleaned_data.get('title'),
-                start_date=form.cleaned_data.get('start_date'),
-                end_date=form.cleaned_data.get('end_date'),
-            )
-
-            for i in range(1, form.cleaned_data.get('no_questions') + 1):
-                Question.objects.create(
-                    text='Q' + str(i),
-                    type='01',
-                    poll=poll
-                )
+            form.save()
 
     else:
-        form = PollForm()
+        form = PollModelForm()
 
     context = {
         'form': form
     }
 
     return render(request, 'polls/create.html', context=context)
+
+
+@login_required
+@permission_required('polls.change_poll')
+def update(request, poll_id):
+    poll = Poll.objects.get(pk=poll_id)
+    if request.method == 'POST':
+        form = PollModelForm(request.POST, instance=poll)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = PollModelForm(instance=poll)
+
+    context = {
+        'form': form,
+        'poll': poll
+    }
+
+    return render(request, 'polls/update.html', context=context)
 
 
 @login_required
