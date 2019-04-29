@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Day Off</title>
+    <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous"
+    />
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div>
+    <div class="text-center mt-4">
+        <h1>ระบบลา (กวางไม่ได้หรอ?)</h1>
+        <h2>รายการ</h2>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="container poll-list">
+            <table class="table">
+                <tr>
+                    <th>ประเภท</th>
+                    <th>เหตุผล</th>
+                    <th>จากวันที่</th>
+                    <th>ถึงวันที่</th>
+                    <th>สถาณะ</th>
+                </tr>
+                {% for dayoff in dayoff_list %}
+                    <tr>
+                        <td>
+                            {{ dayoff.get_type_display }}
+                        </td>
+                        <td>
+                            {{ dayoff.reason }}
+                        </td>
+                        <td>
+                            {{ dayoff.date_start }}
+                        </td>
+                        <td>
+                            {{ dayoff.date_end }}
+                        </td>
+                        <td>
+                            {{ dayoff.get_approve_status_display }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning center container narrow">
+            เข้าสู่ระบบก่อนสิ! จะลายังขี้เกียจอีก
+        </div>
+    {% endif %}
+
+    <div class="container text-center">
+        <p class="text-muted">
+            {% if user.is_authenticated %}
+                <br>Logged in as {{ user.first_name }} {{ user.last_name }}
+            {% endif %}
+        </p>
+
+        <!-- Create New Day Off -->
+        {% if perms.dayoff.change_dayoff %}
+            <a href="/admin/dayoff/dayoff/"
+            >
+                <button class="btn btn-secondary">ผู้จัดกวน</button>
+            </a
+            >
+        {% endif %}
+
+        <!-- Create New Day Off -->
+        {% if perms.dayoff.add_dayoff %}
+            <a href="{% url 'create-dayoff' %}"
+            >
+                <button class="btn btn-success">ขี้เกียจแล้วโวย</button>
+            </a
+            >
+        {% endif %}
+
+        <!-- Login/Logout Button -->
+        {% if not user.is_authenticated %}
+            <a href="{% url 'login' %}"
+            >
+                <button class="btn btn-success">เข้าสู่ระบบ</button>
+            </a
+            >
+            <a href="{% url 'register' %}"
+            >
+                <button class="btn btn-warning">สมัคร</button>
+            </a
+            >
+        {% else %}
+            <a href="{% url 'change_password' %}"
+            >
+                <button class="btn btn-warning">เปลี่ยนรหัส</button>
+            </a
+            >
+            <a href="{% url 'logout' %}"
+            >
+                <button class="btn btn-danger">ออกไป!</button>
+            </a
+            >
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

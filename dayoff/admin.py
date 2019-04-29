@@ -4,7 +4,7 @@ from dayoff.models import Dayoff
 
 
 class DayoffAdmin(admin.ModelAdmin):
-    list_display = ['create_by', 'reason', 'date_start', 'date_end', 'type', ]
+    list_display = ['create_by', 'reason', 'date_start', 'date_end', 'approve_status', ]
     list_filter = ['create_by', 'date_start', 'date_end', 'approve_status', ]
     fieldsets = (
         ('ข้อมูลการลา', {
