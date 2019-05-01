@@ -129,4 +129,4 @@ STATICFILES_DIRS = [
 ]
 
 
-LOGIN_URL = '/polls/login'
+LOGIN_URL = '/dayoff/login'

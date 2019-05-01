@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Poll App</title>
+</head>
+<body>
+<h1>Login to Dayoff App</h1>
+<br/>
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next_url" value="{{ next_url }}">
+    <table>
+        {% if error %}
+            <tr>
+                <td colspan="2"><span style="color: red">{{ error }}</span></td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>USERNAME:</th>
+            <td>
+                <input type="text" name="username" value="{{ username|default_if_none:"" }}">
+            </td>
+        </tr>
+        <tr>
+            <th>PASSWORD:</th>
+            <td>
+                <input type="password" name="password">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="LOGIN"></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
