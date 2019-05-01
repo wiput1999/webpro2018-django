@@ -17,8 +17,6 @@ class DayOffForm(forms.ModelForm):
             'date_end': forms.DateInput(attrs={'class': 'form-control'}),
         }
 
-    error = None
-
     def clean(self):
         data = super().clean()
 
@@ -27,10 +25,8 @@ class DayOffForm(forms.ModelForm):
 
         try:
             if start > end:
-                self.error = 'End date cannot come before start date'
                 raise ValidationError('End date cannot come before start date')
             elif start < datetime.datetime.now().date():
-                self.error = 'Please do not fill date in past'
                 raise ValidationError('Please do not fill date in past')
         except:
             raise ValidationError('Invalid date')
