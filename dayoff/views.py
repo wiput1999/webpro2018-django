@@ -38,7 +38,6 @@ def create(request):
         form = DayOffForm()
 
     context['form'] = form
-    context['error'] = form.error
 
     return render(request, template_name='dayoff/create.html', context=context)
 
