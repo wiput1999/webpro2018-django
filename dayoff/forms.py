@@ -13,8 +13,8 @@ class DayOffForm(forms.ModelForm):
         widgets = {
             'reason': forms.Textarea(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),
-            'date_start': forms.DateInput(attrs={'class': 'form-control'}),
-            'date_end': forms.DateInput(attrs={'class': 'form-control'}),
+            'date_start': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date_end': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
     def clean(self):
@@ -23,10 +23,8 @@ class DayOffForm(forms.ModelForm):
         start = data.get('date_start')
         end = data.get('date_end')
 
-        try:
-            if start > end:
-                raise ValidationError('End date cannot come before start date')
-            elif start < datetime.datetime.now().date():
-                raise ValidationError('Please do not fill date in past')
-        except:
-            raise ValidationError('Invalid date')
+
+        if start > end:
+            raise ValidationError('End date cannot come before start date')
+        elif start < datetime.datetime.now().date():
+            raise ValidationError('Please do not fill date in past')
